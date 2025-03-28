@@ -48,6 +48,9 @@ const App = () => {
         <Route path="/" element={
           isAuthenticated ? <MainPage onLogout={handleLogout} /> : <Navigate to="/login" />
         } />
+        <Route path="/search" element={
+          isAuthenticated ? <MovieSearch /> : <Navigate to="/login" />
+        } />
       </Routes>
     </Router>
   );
