@@ -23,6 +23,7 @@ public class Movie {
     private String title;
     private String genre;
     private String description;
+    private double rating;
 
     @OneToMany(mappedBy = "movie", fetch = FetchType.LAZY)
     private List<WatchList> watchlist = new ArrayList<>();;
