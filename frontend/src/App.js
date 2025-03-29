@@ -7,6 +7,7 @@ import Register from './components/Register';
 import MainPage from './components/MainPage';
 import MovieSearch from './components/MovieSearch';
 import Profile from './components/Profile';
+import MovieQuiz from './components/MovieQuiz';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -55,6 +56,9 @@ const App = () => {
         } />
         <Route path="/profile" element={
           isAuthenticated ? <Profile onLogout={handleLogout} /> : <Navigate to="/login" />
+        } />
+        <Route path="/quiz" element={
+          isAuthenticated ? <MovieQuiz /> : <Navigate to="/login" />
         } />
       </Routes>
     </Router>

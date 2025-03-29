@@ -31,4 +31,7 @@ public class OmdbMovieResponse {
 
     @JsonProperty("Poster")
     private String poster;
+
+    @JsonProperty("imdbID")
+    private String imdbID;
 }
