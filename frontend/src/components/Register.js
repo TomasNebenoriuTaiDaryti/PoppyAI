@@ -39,7 +39,7 @@ const Register = () => {
   };
 
   return (
-    <Container maxWidth="xs" sx={{ mt: 8, minHeight: '100vh' }}>
+    <Container maxWidth="xs" sx={{ mt: 8 }}>
       <Typography variant="h4" component="h1" sx={{ mb: 4 }}>
         Register
       </Typography>
@@ -47,7 +47,6 @@ const Register = () => {
         <TextField
           fullWidth
           label="Username"
-          name="username"
           margin="normal"
           value={formData.username}
           onChange={(e) => setFormData({...formData, username: e.target.value})}
@@ -57,7 +56,6 @@ const Register = () => {
           fullWidth
           label="Email"
           type="email"
-          name="email"
           margin="normal"
           value={formData.email}
           onChange={(e) => setFormData({...formData, email: e.target.value})}
@@ -67,7 +65,6 @@ const Register = () => {
           fullWidth
           label="Password"
           type="password"
-          name="password"
           margin="normal"
           value={formData.password}
           onChange={(e) => setFormData({...formData, password: e.target.value})}
