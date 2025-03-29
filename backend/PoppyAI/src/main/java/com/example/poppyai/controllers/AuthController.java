@@ -40,7 +40,7 @@ public class AuthController {
         User user = userRepo.findByUsername(loginRequest.getUsername());
 
         if (user != null && passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            return ResponseEntity.ok("Login successful");
+            return ResponseEntity.ok(user.getUsername());
         }
         return ResponseEntity.status(401).body("Invalid credentials");
     }

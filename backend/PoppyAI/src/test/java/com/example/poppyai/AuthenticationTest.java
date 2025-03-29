@@ -41,7 +41,6 @@ public class AuthenticationTest {
 
     @Test
     public void testDuplicateUsernameRegistration() throws Exception {
-        // Create existing user first
         User user = new User("test", "password", "existing@example.com");
         userRepo.save(user);
 
@@ -58,7 +57,7 @@ public class AuthenticationTest {
 
         String loginJson = "{\"username\":\"userIsValid\",\"password\":\"password123\"}";
 
-        mockMvc.perform(post("/api/login").contentType(MediaType.APPLICATION_JSON).content(loginJson)).andExpect(status().isOk()).andExpect(content().string("Login successful"));
+        mockMvc.perform(post("/api/login").contentType(MediaType.APPLICATION_JSON).content(loginJson)).andExpect(status().isOk()).andExpect(content().string("userIsValid"));
     }
 
     @Test

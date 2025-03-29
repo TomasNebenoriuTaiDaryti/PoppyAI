@@ -1,5 +1,6 @@
 package com.example.poppyai.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,6 +27,7 @@ public class Movie {
     private double rating;
 
     @OneToMany(mappedBy = "movie", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<WatchList> watchlist = new ArrayList<>();;
 
     public Movie(String title, String genre, String description) {

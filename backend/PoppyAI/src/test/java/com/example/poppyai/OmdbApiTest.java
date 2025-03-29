@@ -32,7 +32,6 @@ public class OmdbApiTest {
         }
     }
 
-    // Helper for case-insensitive title match (some OMDb titles have exact punctuation)
     private void assertEqualsIgnoreCase(String expected, String actual, String message) {
         assertNotNull(actual, "Actual title is null");
         assertTrue(actual.toLowerCase().contains(expected.toLowerCase()), message + " — expected: " + expected + ", got: " + actual);

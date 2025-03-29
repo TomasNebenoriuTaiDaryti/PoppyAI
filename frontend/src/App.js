@@ -5,7 +5,8 @@ import { CssBaseline, Container, CircularProgress } from '@mui/material';
 import Login from './components/Login';
 import Register from './components/Register';
 import MainPage from './components/MainPage';
-import MovieSearch from './MovieSearch';
+import MovieSearch from './components/MovieSearch';
+import Profile from './components/Profile';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -17,10 +18,11 @@ const App = () => {
     setLoading(false);
   }, []);
 
-  const handleLogin = () => {
+  const handleLogin = (username) => {
     localStorage.setItem('isAuthenticated', 'true');
+    localStorage.setItem('username', username);
     setIsAuthenticated(true);
-  };
+};
 
   const handleLogout = () => {
     localStorage.removeItem('isAuthenticated');
@@ -40,7 +42,7 @@ const App = () => {
       <CssBaseline />
       <Routes>
         <Route path="/login" element={
-          isAuthenticated ? <Navigate to="/search" /> : <Login onLogin={handleLogin} />
+          isAuthenticated ? <Navigate to="/" /> : <Login onLogin={handleLogin} />
         } />
         <Route path="/register" element={
           isAuthenticated ? <Navigate to="/" /> : <Register />
@@ -50,6 +52,9 @@ const App = () => {
         } />
         <Route path="/search" element={
           isAuthenticated ? <MovieSearch /> : <Navigate to="/login" />
+        } />
+        <Route path="/profile" element={
+          isAuthenticated ? <Profile onLogout={handleLogout} /> : <Navigate to="/login" />
         } />
       </Routes>
     </Router>

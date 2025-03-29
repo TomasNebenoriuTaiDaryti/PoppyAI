@@ -66,7 +66,7 @@ public class DatabaseTest {
 
         watchListRepo.delete(watchListEntry);
 
-        Optional<WatchList> deletedEntry = watchListRepo.findById((long) watchListEntry.getId());
+        Optional<WatchList> deletedEntry = watchListRepo.findById(watchListEntry.getId());
         assertFalse(deletedEntry.isPresent(), "watchlistas turetu buti istrintas");
     }
 
@@ -93,11 +93,11 @@ public class DatabaseTest {
         WatchList watchListEntry = new WatchList(user, movie1);
         watchListEntry = watchListRepo.save(watchListEntry);
 
-        WatchList entryToUpdate = watchListRepo.findById((long) watchListEntry.getId()).orElseThrow();
+        WatchList entryToUpdate = watchListRepo.findById(watchListEntry.getId()).orElseThrow();
         entryToUpdate.setMovie(movie2);
         watchListRepo.save(entryToUpdate);
 
-        WatchList updatedEntry = watchListRepo.findById((long) watchListEntry.getId()).orElseThrow();
+        WatchList updatedEntry = watchListRepo.findById(watchListEntry.getId()).orElseThrow();
         assertEquals(movie2.getId(), updatedEntry.getMovie().getId(), "Atnaujintas watchlist turi tureti antra filma");
     }
 }

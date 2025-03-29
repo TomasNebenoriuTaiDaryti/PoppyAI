@@ -1,90 +1,78 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Container,
-  Typography,
-  TextField,
-  Button,
-  Box,
-  CircularProgress
-} from '@mui/material';
-import axios from 'axios';
+import { Button, TextField, Container, Typography, Box } from '@mui/material';
+import api from '../api/api';
 
 const Login = ({ onLogin }) => {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    username: '',
-    password: ''
-  });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-
-    try {
-      const response = await axios.post('http://localhost:8080/api/login', formData);
+    const handleSubmit = (e) => {
+      e.preventDefault();
       
-      if (response.data === "Login successful") {
-        onLogin();
-        navigate('/');
-      }
-    } catch (err) {
-      setError(err.response?.data || 'Invalid username or password');
-    } finally {
-      setLoading(false);
-    }
+      api.post('/login', { username, password })
+          .then(response => {
+              onLogin(response.data);
+              navigate('/');
+          })
+          .catch(error => {
+              console.error('Login error:', error);
+              setError(error.response?.data || 'Invalid credentials');
+          });
   };
 
-  return (
-    <Container maxWidth="xs" sx={{ mt: 8, minHeight: '100vh' }}>
-      <Typography variant="h4" component="h1" sx={{ mb: 4 }}>
-        Login
-      </Typography>
-      <Box component="form" onSubmit={handleSubmit} sx={{ p: 3, boxShadow: 3, borderRadius: 2 }}>
-        <TextField
-          fullWidth
-          label="Username"
-          name="username"
-          margin="normal"
-          value={formData.username}
-          onChange={(e) => setFormData({...formData, username: e.target.value})}
-          disabled={loading}
-        />
-        <TextField
-          fullWidth
-          label="Password"
-          type="password"
-          name="password"
-          margin="normal"
-          value={formData.password}
-          onChange={(e) => setFormData({...formData, password: e.target.value})}
-          disabled={loading}
-        />
-        {error && <Typography color="error" sx={{ mt: 2 }}>{error}</Typography>}
-        <Button
-          fullWidth
-          variant="contained"
-          size="large"
-          type="submit"
-          disabled={loading}
-          sx={{ mt: 3 }}
-        >
-          {loading ? <CircularProgress size={24} /> : 'Sign In'}
-        </Button>
-        <Button
-          fullWidth
-          variant="outlined"
-          sx={{ mt: 2 }}
-          onClick={() => navigate('/register')}
-        >
-          Create New Account
-        </Button>
-      </Box>
-    </Container>
-  );
+    return (
+        <Container maxWidth="xs">
+            <Box sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Typography component="h1" variant="h5">
+                    Sign in
+                </Typography>
+                <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        label="Username"
+                        autoFocus
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        label="Password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    {error && (
+                        <Typography color="error" variant="body2">
+                            {error}
+                        </Typography>
+                    )}
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                    >
+                        Sign In
+                    </Button>
+                    <Button
+                        fullWidth
+                        variant="outlined"
+                        sx={{ mb: 2 }}
+                        onClick={() => navigate('/register')}
+                    >
+                        Create New Account
+                    </Button>
+                </Box>
+            </Box>
+        </Container>
+    );
 };
 
 export default Login;

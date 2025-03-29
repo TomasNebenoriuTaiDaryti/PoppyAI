@@ -1,20 +1,43 @@
-import { Container, Typography, Button } from '@mui/material';
+import React from 'react';
+import { Button, Container, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const MainPage = ({ onLogout }) => {
-  return (
-    <Container maxWidth="md" sx={{ mt: 8 }}>
-      <Typography variant="h4" gutterBottom>
-        Welcome to PoppyAI
-      </Typography>
-      <Button 
-        variant="contained" 
-        color="error"
-        onClick={onLogout}
-      >
-        Logout
-      </Button>
-    </Container>
-  );
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        onLogout();
+        navigate('/login');
+    };
+
+    return (
+        <Container>
+            <Typography variant="h4" gutterBottom>
+                Welcome to PoppyAI App
+            </Typography>
+            <Button 
+                variant="contained" 
+                onClick={() => navigate('/search')}
+                sx={{ m: 1 }}
+            >
+                Search Movies
+            </Button>
+            <Button 
+                variant="contained" 
+                onClick={() => navigate('/profile')}
+                sx={{ m: 1 }}
+            >
+                View Profile
+            </Button>
+            <Button 
+                variant="contained" 
+                onClick={handleLogout}
+                sx={{ m: 1 }}
+            >
+                Logout
+            </Button>
+        </Container>
+    );
 };
 
 export default MainPage;
