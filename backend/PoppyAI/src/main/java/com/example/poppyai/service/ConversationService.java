@@ -9,16 +9,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConversationService {
 
     private final Map<String, ConversationState> sessions = new ConcurrentHashMap<>();
-    private final List<String> presetQuestions = List.of(
-            "Do you prefer movies from this decade?",
-            "Are you interested in award-winning films?",
-            "Do you enjoy superhero movies?"
-    );
 
-    public String startConversation() {
+    public String startConversation(DeepseekService deepseekService) {
         String sessionId = UUID.randomUUID().toString();
         ConversationState state = new ConversationState();
-        state.setCurrentQuestion(presetQuestions.get(0)); // Always start with first question
+
+        // Ask first question from AI
+        String firstQuestion = deepseekService.generateNextQuestion(new ArrayList<>(), new ArrayList<>());
+        state.getQuestions().add(firstQuestion);
+        state.setCurrentQuestion(firstQuestion);
+
         sessions.put(sessionId, state);
         return sessionId;
     }
@@ -32,28 +32,22 @@ public class ConversationService {
     }
 
     public String getNextQuestion(ConversationState state, DeepseekService deepseekService) {
-        int nextIndex = state.getAnswerCount();
-
-        if (nextIndex < presetQuestions.size()) {
-            return presetQuestions.get(nextIndex);
-        }
-
-        return deepseekService.generateNextQuestion(state.getAnswers());
+        return deepseekService.generateNextQuestion(state.getQuestions(), state.getAnswers());
     }
 
     public static class ConversationState {
         private int answerCount = 0;
+        private List<String> questions = new ArrayList<>();
         private List<String> answers = new ArrayList<>();
         private String currentQuestion;
 
         public int getAnswerCount() { return answerCount; }
-        public void setAnswerCount(int answerCount) {
-            this.answerCount = answerCount;
-        }
+        public void setAnswerCount(int answerCount) { this.answerCount = answerCount; }
+
         public List<String> getAnswers() { return answers; }
+        public List<String> getQuestions() { return questions; }
+
         public String getCurrentQuestion() { return currentQuestion; }
-        public void setCurrentQuestion(String currentQuestion) {
-            this.currentQuestion = currentQuestion;
-        }
+        public void setCurrentQuestion(String currentQuestion) { this.currentQuestion = currentQuestion; }
     }
 }

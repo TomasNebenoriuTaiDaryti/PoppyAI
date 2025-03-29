@@ -24,7 +24,7 @@ public class ConversationController {
 
     @PostMapping("/start")
     public ResponseEntity<Map<String, Object>> startConversation() {
-        String sessionId = conversationService.startConversation();
+        String sessionId = conversationService.startConversation(deepseekService);
         ConversationService.ConversationState state = conversationService.getState(sessionId);
 
         Map<String, Object> response = new HashMap<>();
@@ -58,6 +58,7 @@ public class ConversationController {
             }
 
             String nextQuestion = conversationService.getNextQuestion(state, deepseekService);
+            state.getQuestions().add(nextQuestion);
             state.setCurrentQuestion(nextQuestion);
             conversationService.updateState(sessionId, state);
 
@@ -78,7 +79,7 @@ public class ConversationController {
             ConversationService.ConversationState state
     ) {
         try {
-            var recommendations = deepseekService.getRecommendations(state.getAnswers());
+            var recommendations = deepseekService.generateRecommendations(state.getAnswers());
             Map<String, Object> response = new HashMap<>();
             response.put("recommendations", recommendations);
             return ResponseEntity.ok(response);

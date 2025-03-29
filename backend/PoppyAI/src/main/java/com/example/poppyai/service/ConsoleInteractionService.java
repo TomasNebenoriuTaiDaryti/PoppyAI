@@ -1,5 +1,5 @@
 // src/main/java/com/example/poppyai/service/ConsoleInteractionService.java
-package com.example.poppyai.service;
+/*package com.example.poppyai.service;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
@@ -69,4 +69,4 @@ public class ConsoleInteractionService implements CommandLineRunner {
             System.out.println("Invalid input! Please enter 'yes' or 'no'.");
         }
     }
-}
+}*/
