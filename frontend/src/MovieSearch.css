@@ -1,0 +1,48 @@
+.movie-search {
+    text-align: center;
+    padding: 40px;
+    background-color: #1c1c1c;
+    color: white;
+    min-height: 100vh;
+  }
+  
+  .movie-search input {
+    padding: 10px;
+    width: 300px;
+    margin-right: 10px;
+    border-radius: 5px;
+    border: none;
+    font-size: 1rem;
+  }
+  
+  .movie-search button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .movie-card {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #282c34;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .movie-card img {
+    width: 200px;
+    border-radius: 10px;
+  }
+  
+  .error {
+    color: red;
+    margin-top: 20px;
+  }
+  
