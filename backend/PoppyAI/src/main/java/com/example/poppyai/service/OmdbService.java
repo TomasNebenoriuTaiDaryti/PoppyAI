@@ -22,6 +22,7 @@ public class OmdbService {
         System.out.println("OMDb Title: " + response.getTitle());
         System.out.println("Genre: " + response.getGenre());
         System.out.println("Plot: " + response.getPlot());
+        System.out.println("IMDb Link: https://www.imdb.com/title/" + response.getImdbID());
 
         return response;
     }

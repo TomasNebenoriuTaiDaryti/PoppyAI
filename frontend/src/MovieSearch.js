@@ -12,10 +12,7 @@ function MovieSearch() {
     console.log("Sending request to backend for:", title);
 
     fetch(`http://localhost:8080/api/movies/search?title=${title}`)
-      .then(res => {
-        console.log("Received response:", res);
-        return res.json();
-      })
+      .then(res => res.json())
       .then(data => {
         console.log("Parsed JSON:", data);
         if (data.Title) {
@@ -36,13 +33,17 @@ function MovieSearch() {
   return (
     <div className="movie-search">
       <h1>Search for a Movie</h1>
-      <input
-        type="text"
-        placeholder="Enter a movie title..."
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <button onClick={handleSearch}>Search</button>
+
+      {/* 🔧 Wrapped in a flex container */}
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Enter a movie title..."
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <button onClick={handleSearch}>Search</button>
+      </div>
 
       {error && <p className="error">{error}</p>}
 
@@ -54,6 +55,18 @@ function MovieSearch() {
           <p><strong>Runtime:</strong> {movie.Runtime}</p>
           <p><strong>IMDb:</strong> {movie.imdbRating} ({movie.imdbVotes})</p>
           <p>{movie.Plot}</p>
+          {movie.imdbID && (
+            <p>
+              <a
+                href={`https://www.imdb.com/title/${movie.imdbID}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="imdb-link"
+              >
+                View on IMDb
+              </a>
+            </p>
+          )}
         </div>
       )}
     </div>

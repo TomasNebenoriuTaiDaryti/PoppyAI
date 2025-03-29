@@ -1,48 +1,71 @@
 .movie-search {
-    text-align: center;
-    padding: 40px;
-    background-color: #1c1c1c;
-    color: white;
-    min-height: 100vh;
-  }
-  
-  .movie-search input {
-    padding: 10px;
-    width: 300px;
-    margin-right: 10px;
-    border-radius: 5px;
-    border: none;
-    font-size: 1rem;
-  }
-  
-  .movie-search button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .movie-card {
-    margin-top: 30px;
-    padding: 20px;
-    background-color: #282c34;
-    border-radius: 10px;
-    width: 80%;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  .movie-card img {
-    width: 200px;
-    border-radius: 10px;
-  }
-  
-  .error {
-    color: red;
-    margin-top: 20px;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 20px;
+  min-height: 100vh;
+  background-color: #111;
+  color: white;
+}
+
+.search-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.search-bar input {
+  padding: 10px;
+  font-size: 16px;
+  width: 300px;
+}
+
+.search-bar button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.movie-card {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  width: 400px;
+  text-align: left;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.movie-card img {
+  width: 100%;
+  border-radius: 4px;
+}
+
+.movie-card h2 {
+  margin: 10px 0;
+}
+
+.movie-card p {
+  margin: 5px 0;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.imdb-link {
+  display: inline-block;
+  margin-top: 10px;
+  color: #f5c518;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.imdb-link:hover {
+  text-decoration: underline;
+}
