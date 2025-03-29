@@ -18,7 +18,7 @@ public class ConversationService {
     public String startConversation() {
         String sessionId = UUID.randomUUID().toString();
         ConversationState state = new ConversationState();
-        state.setCurrentQuestion(getRandomPresetQuestion());
+        state.setCurrentQuestion(presetQuestions.get(0)); // Always start with first question
         sessions.put(sessionId, state);
         return sessionId;
     }
@@ -31,8 +31,14 @@ public class ConversationService {
         sessions.put(sessionId, state);
     }
 
-    private String getRandomPresetQuestion() {
-        return presetQuestions.get(new Random().nextInt(presetQuestions.size()));
+    public String getNextQuestion(ConversationState state, DeepseekService deepseekService) {
+        int nextIndex = state.getAnswerCount();
+
+        if (nextIndex < presetQuestions.size()) {
+            return presetQuestions.get(nextIndex);
+        }
+
+        return deepseekService.generateNextQuestion(state.getAnswers());
     }
 
     public static class ConversationState {
@@ -40,11 +46,14 @@ public class ConversationService {
         private List<String> answers = new ArrayList<>();
         private String currentQuestion;
 
-        // Getters and setters
         public int getAnswerCount() { return answerCount; }
-        public void setAnswerCount(int answerCount) { this.answerCount = answerCount; }
+        public void setAnswerCount(int answerCount) {
+            this.answerCount = answerCount;
+        }
         public List<String> getAnswers() { return answers; }
         public String getCurrentQuestion() { return currentQuestion; }
-        public void setCurrentQuestion(String currentQuestion) { this.currentQuestion = currentQuestion; }
+        public void setCurrentQuestion(String currentQuestion) {
+            this.currentQuestion = currentQuestion;
+        }
     }
 }

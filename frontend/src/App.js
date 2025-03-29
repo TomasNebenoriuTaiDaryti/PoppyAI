@@ -5,7 +5,8 @@ import { CssBaseline, Container, CircularProgress } from '@mui/material';
 import Login from './components/Login';
 import Register from './components/Register';
 import MainPage from './components/MainPage';
-import MovieSearch from './MovieSearch';
+import MovieSearch from './components/MovieSearch';
+import MovieQuiz from './components/MovieQuiz';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -39,17 +40,20 @@ const App = () => {
     <Router>
       <CssBaseline />
       <Routes>
+        <Route path="/" element={
+          isAuthenticated ? <MainPage onLogout={handleLogout} /> : <Navigate to="/login" />
+        } />
         <Route path="/login" element={
-          isAuthenticated ? <Navigate to="/search" /> : <Login onLogin={handleLogin} />
+          isAuthenticated ? <Navigate to="/" /> : <Login onLogin={handleLogin} />
         } />
         <Route path="/register" element={
           isAuthenticated ? <Navigate to="/" /> : <Register />
         } />
-        <Route path="/" element={
-          isAuthenticated ? <MainPage onLogout={handleLogout} /> : <Navigate to="/login" />
-        } />
         <Route path="/search" element={
           isAuthenticated ? <MovieSearch /> : <Navigate to="/login" />
+        } />
+        <Route path="/quiz" element={
+          isAuthenticated ? <MovieQuiz /> : <Navigate to="/login" />
         } />
       </Routes>
     </Router>

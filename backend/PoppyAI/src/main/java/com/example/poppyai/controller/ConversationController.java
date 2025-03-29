@@ -10,6 +10,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/conversation")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class ConversationController {
 
     private final ConversationService conversationService;
@@ -25,7 +26,13 @@ public class ConversationController {
     public ResponseEntity<Map<String, Object>> startConversation() {
         String sessionId = conversationService.startConversation();
         ConversationService.ConversationState state = conversationService.getState(sessionId);
-        return ResponseEntity.ok(createResponse(sessionId, state));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("sessionId", sessionId);
+        response.put("question", state.getCurrentQuestion());
+        response.put("questionNumber", state.getAnswerCount() + 1);
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/answer")
@@ -33,18 +40,36 @@ public class ConversationController {
         String sessionId = request.get("sessionId");
         String answer = request.get("answer");
 
-        ConversationService.ConversationState state = conversationService.getState(sessionId);
-        if (state == null) {
-            return ResponseEntity.badRequest().body("Invalid session ID");
+        if (sessionId == null || sessionId.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Missing session ID"));
         }
 
-        state.getAnswers().add(answer);
-        state.setAnswerCount(state.getAnswerCount() + 1);
+        ConversationService.ConversationState state = conversationService.getState(sessionId);
+        if (state == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid session ID"));
+        }
 
-        if (state.getAnswerCount() >= 10) {
-            return handleRecommendationPhase(sessionId, state);
-        } else {
-            return handleNextQuestion(sessionId, state);
+        try {
+            state.getAnswers().add(answer);
+            state.setAnswerCount(state.getAnswerCount() + 1);
+
+            if (state.getAnswerCount() >= 10) {
+                return handleRecommendationPhase(sessionId, state);
+            }
+
+            String nextQuestion = conversationService.getNextQuestion(state, deepseekService);
+            state.setCurrentQuestion(nextQuestion);
+            conversationService.updateState(sessionId, state);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("question", state.getCurrentQuestion());
+            response.put("questionNumber", state.getAnswerCount() + 1);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("error", e.getMessage()));
         }
     }
 
@@ -52,26 +77,14 @@ public class ConversationController {
             String sessionId,
             ConversationService.ConversationState state
     ) {
-        var recommendations = deepseekService.getRecommendations(state.getAnswers());
-        conversationService.updateState(sessionId, state);
-        return ResponseEntity.ok(Map.of("recommendations", recommendations));
-    }
-
-    private ResponseEntity<Map<String, Object>> handleNextQuestion(
-            String sessionId,
-            ConversationService.ConversationState state
-    ) {
-        var nextQuestion = deepseekService.generateNextQuestion(state.getAnswers());
-        state.setCurrentQuestion(nextQuestion);
-        conversationService.updateState(sessionId, state);
-        return ResponseEntity.ok(createResponse(sessionId, state));
-    }
-
-    private Map<String, Object> createResponse(String sessionId, ConversationService.ConversationState state) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("sessionId", sessionId);
-        response.put("question", state.getCurrentQuestion());
-        response.put("questionNumber", state.getAnswerCount() + 1);
-        return response;
+        try {
+            var recommendations = deepseekService.getRecommendations(state.getAnswers());
+            Map<String, Object> response = new HashMap<>();
+            response.put("recommendations", recommendations);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("error", "Failed to generate recommendations"));
+        }
     }
 }

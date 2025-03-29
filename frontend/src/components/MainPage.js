@@ -1,18 +1,82 @@
-import { Container, Typography, Button } from '@mui/material';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button, Container, Typography, Box, AppBar, Toolbar } from '@mui/material';
 
 const MainPage = ({ onLogout }) => {
+  const navigate = useNavigate();
+
   return (
-    <Container maxWidth="md" sx={{ mt: 8 }}>
-      <Typography variant="h4" gutterBottom>
-        Welcome to PoppyAI
-      </Typography>
-      <Button 
-        variant="contained" 
-        color="error"
-        onClick={onLogout}
-      >
-        Logout
-      </Button>
+    <Container maxWidth="lg">
+      <AppBar position="static" sx={{ mb: 4 }}>
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            PoppyAI
+          </Typography>
+          <Button 
+            color="inherit" 
+            onClick={() => navigate('/quiz')}
+            sx={{ fontWeight: 'bold', mx: 2 }}
+          >
+            Movie Quiz
+          </Button>
+          <Button 
+            color="inherit" 
+            onClick={() => navigate('/search')}
+            sx={{ fontWeight: 'bold', mx: 2 }}
+          >
+            Movie Search
+          </Button>
+          <Button 
+            color="inherit" 
+            onClick={onLogout}
+            sx={{ fontWeight: 'bold' }}
+          >
+            Logout
+          </Button>
+        </Toolbar>
+      </AppBar>
+
+      <Box sx={{ textAlign: 'center', mt: 8 }}>
+        <Typography variant="h3" gutterBottom sx={{ fontWeight: 'bold' }}>
+          Welcome to PoppyAI
+        </Typography>
+        <Typography variant="h5" sx={{ mb: 4, color: 'text.secondary' }}>
+          Discover your next favorite movie
+        </Typography>
+
+        <Box sx={{ display: 'flex', gap: 4, justifyContent: 'center', mt: 8 }}>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={() => navigate('/quiz')}
+            sx={{ 
+              px: 6, 
+              py: 3, 
+              fontSize: '1.2rem',
+              bgcolor: 'primary.main',
+              '&:hover': { bgcolor: 'primary.dark' }
+            }}
+          >
+            Start AI Movie Quiz
+          </Button>
+          
+          <Button
+            variant="contained"
+            color="secondary"
+            size="large"
+            onClick={() => navigate('/search')}
+            sx={{ 
+              px: 6, 
+              py: 3, 
+              fontSize: '1.2rem',
+              bgcolor: 'secondary.main',
+              '&:hover': { bgcolor: 'secondary.dark' }
+            }}
+          >
+            Search Movie Database
+          </Button>
+        </Box>
+      </Box>
     </Container>
   );
 };
