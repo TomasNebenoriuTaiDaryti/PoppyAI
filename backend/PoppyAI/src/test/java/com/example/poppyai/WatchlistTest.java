@@ -15,14 +15,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -51,8 +53,8 @@ public class WatchlistTest {
         User user = new User(TEST_USERNAME, "password", "watchlist@test.com");
         userRepo.save(user);
 
-        Movie movie1 = movieRepo.save(new Movie(TEST_MOVIE1, "Sci-Fi", "Dream within a dream"));
-        Movie movie2 = movieRepo.save(new Movie(TEST_MOVIE2, "Sci-Fi", "Space exploration"));
+        Movie movie1 = movieRepo.save(new Movie(TEST_MOVIE1, "Sci-Fi", "Dream within a dream", 1, "1"));
+        Movie movie2 = movieRepo.save(new Movie(TEST_MOVIE2, "Sci-Fi", "Space exploration",1, "3"));
 
         watchListRepo.save(new WatchList(user, movie1));
         watchListRepo.save(new WatchList(user, movie2));
@@ -88,5 +90,45 @@ public class WatchlistTest {
 
         assertFalse(movie1Present, "1 filmas turi buti istrintas");
         assertTrue(movie2Present, "2 filmas liks watchliste");
+    }
+
+    @Test
+    public void testAddToWatchlist() throws Exception {
+        Movie newMovie = new Movie("The Matrix", "Sci-Fi", "Virtual reality adventure", 8.7, "tt0133093");
+
+        String movieJson = """
+        {
+            "title": "The Matrix",
+            "genre": "Sci-Fi",
+            "description": "Virtual reality adventure",
+            "rating": 8.7,
+            "imdbID": "tt0133093"
+        }
+        """;
+
+        mockMvc.perform(post("/api/watchlist/" + TEST_USERNAME + "/add").contentType(MediaType.APPLICATION_JSON).content(movieJson)).andExpect(status().isOk());
+
+        List<WatchList> watchlist = watchListRepo.findByUserWithMovies(userRepo.findByUsername(TEST_USERNAME));
+
+        boolean matrixAdded = watchlist.stream().anyMatch(wl -> wl.getMovie().getTitle().equals("The Matrix"));assertTrue(matrixAdded, "Naujas filmas bus idetas i watchlista");
+
+        mockMvc.perform(post("/api/watchlist/" + TEST_USERNAME + "/add").contentType(MediaType.APPLICATION_JSON).content(movieJson)).andExpect(status().isOk());
+
+        long matrixCount = watchlist.stream().filter(wl -> wl.getMovie().getTitle().equals("The Matrix")).count();assertEquals(1, matrixCount, "Bus tik toks vienas filmas");
+    }
+
+    @Test
+    public void testAddToWatchlist_InvalidUser() throws Exception {
+        String movieJson = """
+        {
+            "title": "Invalid User Test",
+            "genre": "Test",
+            "description": "Test movie",
+            "rating": 5.0,
+            "imdbID": "tt0000000"
+        }
+        """;
+
+        mockMvc.perform(post("/api/watchlist/nonExistentUser/add").contentType(MediaType.APPLICATION_JSON).content(movieJson)).andExpect(status().isNotFound());
     }
 }

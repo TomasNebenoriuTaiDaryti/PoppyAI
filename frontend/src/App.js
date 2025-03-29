@@ -1,7 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { CssBaseline, Container, CircularProgress } from '@mui/material';
+import { useState, useEffect, useMemo } from 'react';
+import { CssBaseline, Container, CircularProgress, ThemeProvider } from '@mui/material';
+import { darkTheme, lightTheme } from './theme';
 import Login from './components/Login';
 import Register from './components/Register';
 import MainPage from './components/MainPage';
@@ -12,6 +13,11 @@ import MovieQuiz from './components/MovieQuiz';
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [darkMode, setDarkMode] = useState(true);
+  const theme = useMemo(
+    () => darkMode ? darkTheme : lightTheme,
+    [darkMode]
+  );
 
   useEffect(() => {
     const token = localStorage.getItem('isAuthenticated');
@@ -23,11 +29,14 @@ const App = () => {
     localStorage.setItem('isAuthenticated', 'true');
     localStorage.setItem('username', username);
     setIsAuthenticated(true);
-};
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('isAuthenticated');
     setIsAuthenticated(false);
+  };
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
   };
 
   if (loading) {
@@ -39,6 +48,7 @@ const App = () => {
   }
 
   return (
+    <ThemeProvider theme={theme}>
     <Router>
       <CssBaseline />
       <Routes>
@@ -49,7 +59,7 @@ const App = () => {
           isAuthenticated ? <Navigate to="/" /> : <Register />
         } />
         <Route path="/" element={
-          isAuthenticated ? <MainPage onLogout={handleLogout} /> : <Navigate to="/login" />
+          isAuthenticated ? <MainPage onLogout={handleLogout} darkMode={darkMode} toggleDarkMode={toggleDarkMode} /> : <Navigate to="/login" />
         } />
         <Route path="/search" element={
           isAuthenticated ? <MovieSearch /> : <Navigate to="/login" />
@@ -62,6 +72,7 @@ const App = () => {
         } />
       </Routes>
     </Router>
+    </ThemeProvider>
   );
 };
 

@@ -1,5 +1,6 @@
 package com.example.poppyai.repo;
 
+import com.example.poppyai.model.Movie;
 import com.example.poppyai.model.User;
 import com.example.poppyai.model.WatchList;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,4 +14,6 @@ public interface WatchListRepo extends JpaRepository<WatchList, Integer> {
     List<WatchList> findByUserWithMovies(@Param("user") User user);
 
     void deleteByUserAndMovie_Id(User user, Integer movie_id);
+
+    boolean existsByUserAndMovie(User user, Movie movie);
 }

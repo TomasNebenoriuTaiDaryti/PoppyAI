@@ -2,7 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Container, Typography, Box, AppBar, Toolbar } from '@mui/material';
 
-const MainPage = ({ onLogout }) => {
+
+const MainPage = ({ onLogout, darkMode, toggleDarkMode }) => {
   const navigate = useNavigate();
   const handleLogout = () => {
     onLogout();
@@ -13,7 +14,7 @@ const MainPage = ({ onLogout }) => {
       <AppBar position="static" sx={{ mb: 4 }}>
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            PoppyAI
+            Poppy
           </Typography>
           <Button 
             color="inherit" 
@@ -24,7 +25,7 @@ const MainPage = ({ onLogout }) => {
           </Button>
           <Button 
             color="inherit" 
-            onClick={() => navigate('/search')}
+            onClick={() => navigate('/profile')}
             sx={{ fontWeight: 'bold', mx: 2 }}
           >
             View Profile
@@ -42,6 +43,13 @@ const MainPage = ({ onLogout }) => {
             sx={{ fontWeight: 'bold' }}
           >
             Logout
+          </Button>
+          <Button 
+            color="inherit" 
+            onClick={toggleDarkMode}
+            sx={{ fontWeight: 'bold', mx: 2 }}
+          >
+            {darkMode ? '☀️ Light' : '🌙 Dark'}
           </Button>
         </Toolbar>
       </AppBar>

@@ -1,4 +1,4 @@
-package com.example.poppyai.controller;
+package com.example.poppyai.controllers;
 
 import com.example.poppyai.service.ConversationService;
 import com.example.poppyai.service.DeepseekService;
@@ -79,7 +79,10 @@ public class ConversationController {
             ConversationService.ConversationState state
     ) {
         try {
-            var recommendations = deepseekService.generateRecommendations(state.getAnswers());
+            var recommendations = deepseekService.generateRecommendations(
+                    state.getQuestions(),
+                    state.getAnswers()
+            );
             Map<String, Object> response = new HashMap<>();
             response.put("recommendations", recommendations);
             return ResponseEntity.ok(response);

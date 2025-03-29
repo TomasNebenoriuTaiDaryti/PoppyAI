@@ -25,14 +25,17 @@ public class Movie {
     private String genre;
     private String description;
     private double rating;
+    private String imdbID;
 
     @OneToMany(mappedBy = "movie", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<WatchList> watchlist = new ArrayList<>();;
 
-    public Movie(String title, String genre, String description) {
+    public Movie(String title, String genre, String description, double rating, String imdbID) {
         this.title = title;
         this.genre = genre;
         this.description = description;
+        this.rating = rating;
+        this.imdbID = imdbID;
     }
 }

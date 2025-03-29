@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import api from '../api/api';
 
 function MovieQuiz() {
   const [sessionId, setSessionId] = useState(null);
@@ -20,6 +21,7 @@ function MovieQuiz() {
   const [loading, setLoading] = useState(true);
   const [recommendedMovies, setRecommendedMovies] = useState([]);
   const [quizFinished, setQuizFinished] = useState(false);
+  const [addedMovies, setAddedMovies] = useState(new Set());
 
   useEffect(() => {
     fetch('http://localhost:8080/api/conversation/start', { method: 'POST' })
@@ -47,7 +49,7 @@ function MovieQuiz() {
         const res = await fetch(url);
         const data = await res.json();
   
-        console.log(`📦 OMDb response for "${cleanTitle}":`, data);
+        console.log(`OMDb response for "${cleanTitle}":`, data);
   
         if (data && (data.title || data.Title)) {
           results.push({
@@ -64,7 +66,7 @@ function MovieQuiz() {
         }
         
       } catch (err) {
-        console.error(`❌ Error fetching OMDb data for "${cleanTitle}":`, err);
+        console.error(`Error fetching OMDb data for "${cleanTitle}":`, err);
       }
     }
   
@@ -92,17 +94,17 @@ function MovieQuiz() {
               .filter(Boolean);
 
 
-          console.log("📝 Movie titles from backend:", titles);
+          console.log("Movie titles from backend:", titles);
 
           const movies = await fetchOmdbOneByOne(titles);
 
           if (movies.length > 0) {
-            console.log("🎬 Valid OMDb movies:", movies);
+            console.log("Valid OMDb movies:", movies);
             setRecommendedMovies(movies);
             setQuizFinished(true);
             setQuestion(null);
           } else {
-            console.warn("⚠️ No valid movies returned. Not finishing quiz.");
+            console.warn("No valid movies returned. Not finishing quiz.");
             setQuizFinished(false);
           }
 
@@ -118,9 +120,28 @@ function MovieQuiz() {
       });
   };
 
+  const handleAddToWatchlist = async (movie) => {
+    const username = localStorage.getItem('username');
+    try {
+        await api.post(`/watchlist/${username}/add`, {
+            title: movie.title,
+            genre: movie.genre,
+            description: movie.plot,
+            year: movie.year,
+            runtime: movie.runtime,
+            imdbRating: movie.imdbRating,
+            imdbID: movie.imdbID,
+            poster: movie.poster
+        });
+        setAddedMovies(prev => new Set([...prev, movie.imdbID]));
+    } catch (error) {
+        console.error('Error adding to watchlist:', error);
+    }
+};
+
   return (
     <Container maxWidth="sm" sx={{ mt: 4 }}>
-      <Paper elevation={4} sx={{ p: 4, backgroundColor: '#121212', color: '#fff' }}>
+      <Paper elevation={4} sx={{ p: 4 }}>
         <Typography variant="h4" gutterBottom>Movie Preference Quiz</Typography>
 
         {loading ? (
@@ -155,13 +176,27 @@ function MovieQuiz() {
                       </a>
                     </Typography>
                   )}
+                  <Button
+                    variant="contained"
+                    size="small"
+                    onClick={() => handleAddToWatchlist(movie)}
+                    sx={{ 
+                      mt: 1,
+                      bgcolor: addedMovies.has(movie.imdbID) ? '#4caf50' : 'primary.main',
+                      '&:hover': {
+                          bgcolor: addedMovies.has(movie.imdbID) ? '#388e3c' : 'primary.dark'
+                      }
+                    }}
+                  >
+                    {addedMovies.has(movie.imdbID) ? 'Added ✓' : 'Add to Watchlist'}
+                  </Button>
                 </CardContent>
               </Card>
             ))}
           </Box>
         ) : (
           <>
-            <Typography variant="body1" paragraph>
+            <Typography variant="body1">
               <strong>Question {questionNumber}/10:</strong> {question}
             </Typography>
             <Box display="flex" justifyContent="center" gap={2}>

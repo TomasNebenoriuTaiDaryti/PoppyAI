@@ -1,4 +1,3 @@
-// src/main/java/com/example/poppyai/config/DeepseekConfig.java
 package com.example.poppyai.config;
 
 import org.springframework.beans.factory.annotation.Value;

@@ -14,7 +14,6 @@ public class ConversationService {
         String sessionId = UUID.randomUUID().toString();
         ConversationState state = new ConversationState();
 
-        // Ask first question from AI
         String firstQuestion = deepseekService.generateNextQuestion(new ArrayList<>(), new ArrayList<>());
         state.getQuestions().add(firstQuestion);
         state.setCurrentQuestion(firstQuestion);

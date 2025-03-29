@@ -64,10 +64,22 @@ const Profile = ({ onLogout }) => {
             </Typography>
             <List>
                 {watchlist.map(movie => (
-                    <ListItem key={movie.id}>
+                    <ListItem key={movie.id} sx={{ backgroundColor: 'background.paper' }}>
                         <ListItemText
-                            primary={movie.title}
-                            secondary={`Genre: ${movie.genre} • Rating: ${movie.rating}`}
+                            primary={`${movie.title}`}
+                            secondary={
+                                <>
+                                    <Typography variant="body2">
+                                        Genre: {movie.genre} 
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        Rating: {movie.rating}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        Description: {movie.description}
+                                    </Typography>
+                                </>
+                            }
                         />
                         <IconButton 
                             edge="end"

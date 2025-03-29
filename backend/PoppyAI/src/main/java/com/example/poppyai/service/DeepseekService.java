@@ -20,7 +20,6 @@ public class DeepseekService {
 
     private final RestTemplate restTemplate;
 
-    // ✅ Constructor using Qualifier to match the bean name
     public DeepseekService(@Qualifier("deepseekRestTemplate") RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
@@ -28,8 +27,12 @@ public class DeepseekService {
     public String generateNextQuestion(List<String> previousQuestions, List<String> answers) {
         List<Message> messages = new ArrayList<>();
         messages.add(new Message("system",
-                "You are a movie recommendation assistant. without any additional chatter, generate 10 concise yes/no questions. Give only one question at a time, don't repeat questions. Give questions based on finding out the mood of the user, ask general questions, but not specifically about movies/genres/themes. Questions must be sent without anything else."));
-
+                "Generate concise yes/no questions to determine movie preferences. "
+                        + "Focus on mood like:'are u mad now?, are u happy ?', setting, themes, and watching habits. "
+                        + "Example: 'Do you prefer recent releases?' "
+                        + "Only provide one question with no extra text."
+                        + "Do NOT give questions that are makes you choose ( this or that )"
+                        + "Focus more on users mood right now at this time."));
 
 
         for (int i = 0; i < answers.size(); i++) {
@@ -47,14 +50,15 @@ public class DeepseekService {
         return response.getChoices().get(0).getMessage().getContent();
     }
 
-    public String generateRecommendations(List<String> answers) {
-        StringBuilder userPrompt = new StringBuilder("Based on the following answers, recommend 3 movies (send the movies in 3 different lines without any formatting, just the movie name):\n");
+    public String generateRecommendations(List<String> questions, List<String> answers) {
+        StringBuilder userPrompt = new StringBuilder("Based on the following conversation, recommend 3 movies (only titles, each on a new line):\n");
         for (int i = 0; i < answers.size(); i++) {
-            userPrompt.append("Q").append(i + 1).append(": ").append(answers.get(i)).append("\n");
+            userPrompt.append("Question: ").append(questions.get(i)).append("\n");
+            userPrompt.append("Answer: ").append(answers.get(i)).append("\n\n");
         }
 
         DeepseekRequest request = new DeepseekRequest(model, List.of(
-                new Message("system", "You are a movie expert. Based on the following answers, recommend 3 movies (send the movies in 3 different lines without any formatting, just the movie name)."),
+                new Message("system", "You are a movie expert. Analyze the user's preferences from the Q&A and recommend 3 relevant movies. Format: One movie per line, no extra text."),
                 new Message("user", userPrompt.toString())
         ));
 
