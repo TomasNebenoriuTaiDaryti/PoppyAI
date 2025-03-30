@@ -34,10 +34,12 @@ public class DeepseekService {
                         + "Do NOT give questions that are makes you choose ( this or that )"
                         + "Focus more on users mood right now at this time."));
 
-
         for (int i = 0; i < answers.size(); i++) {
+            String answer = answers.get(i);
+            if ("skip".equals(answer)) continue;
+
             messages.add(new Message("assistant", previousQuestions.get(i)));
-            messages.add(new Message("user", answers.get(i)));
+            messages.add(new Message("user", answer));
         }
 
         DeepseekRequest request = new DeepseekRequest(model, messages);
@@ -53,8 +55,11 @@ public class DeepseekService {
     public String generateRecommendations(List<String> questions, List<String> answers) {
         StringBuilder userPrompt = new StringBuilder("Based on the following conversation, recommend 3 movies (only titles, each on a new line):\n");
         for (int i = 0; i < answers.size(); i++) {
+            String answer = answers.get(i);
+            if ("skip".equals(answer)) continue;
+
             userPrompt.append("Question: ").append(questions.get(i)).append("\n");
-            userPrompt.append("Answer: ").append(answers.get(i)).append("\n\n");
+            userPrompt.append("Answer: ").append(answer).append("\n\n");
         }
 
         DeepseekRequest request = new DeepseekRequest(model, List.of(

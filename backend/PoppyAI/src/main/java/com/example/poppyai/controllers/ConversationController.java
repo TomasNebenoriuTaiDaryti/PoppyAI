@@ -1,12 +1,11 @@
-package com.example.poppyai.controllers;
+package com.example.poppyai.controller;
 
 import com.example.poppyai.service.ConversationService;
 import com.example.poppyai.service.DeepseekService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/conversation")
@@ -38,7 +37,11 @@ public class ConversationController {
     @PostMapping("/answer")
     public ResponseEntity<?> handleAnswer(@RequestBody Map<String, String> request) {
         String sessionId = request.get("sessionId");
-        String answer = request.get("answer");
+        String answer = request.get("answer").toLowerCase();
+
+        if (!Arrays.asList("yes", "no", "skip").contains(answer)) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid answer. Allowed values: yes/no/skip"));
+        }
 
         if (sessionId == null || sessionId.isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("error", "Missing session ID"));
@@ -51,7 +54,11 @@ public class ConversationController {
 
         try {
             state.getAnswers().add(answer);
-            state.setAnswerCount(state.getAnswerCount() + 1);
+
+            // Only increment count for valid answers
+            if (!"skip".equals(answer)) {
+                state.setAnswerCount(state.getAnswerCount() + 1);
+            }
 
             if (state.getAnswerCount() >= 10) {
                 return handleRecommendationPhase(sessionId, state);

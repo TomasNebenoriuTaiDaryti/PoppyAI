@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import SkipNextIcon from '@mui/icons-material/SkipNext';
 import api from '../api/api';
 
 function MovieQuiz() {
@@ -81,7 +82,7 @@ function MovieQuiz() {
     fetch('http://localhost:8080/api/conversation/answer', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sessionId, answer })
+      body: JSON.stringify({ sessionId, answer: answer.toLowerCase() })
     })
       .then(res => res.json())
       .then(async (data) => {
@@ -92,7 +93,6 @@ function MovieQuiz() {
               .split('\n')
               .map(t => t.trim())
               .filter(Boolean);
-
 
           console.log("Movie titles from backend:", titles);
 
@@ -137,7 +137,7 @@ function MovieQuiz() {
     } catch (error) {
         console.error('Error adding to watchlist:', error);
     }
-};
+  };
 
   return (
     <Container maxWidth="sm" sx={{ mt: 4 }}>
@@ -196,15 +196,16 @@ function MovieQuiz() {
           </Box>
         ) : (
           <>
-            <Typography variant="body1">
+            <Typography variant="body1" sx={{ mb: 3 }}>
               <strong>Question {questionNumber}/10:</strong> {question}
             </Typography>
-            <Box display="flex" justifyContent="center" gap={2}>
+            <Box display="flex" justifyContent="center" gap={2} flexWrap="wrap">
               <Button
                 variant="contained"
                 color="success"
                 onClick={() => handleAnswer("Yes")}
                 startIcon={<ThumbUpIcon />}
+                sx={{ flexGrow: 1 }}
               >
                 YES
               </Button>
@@ -213,8 +214,18 @@ function MovieQuiz() {
                 color="error"
                 onClick={() => handleAnswer("No")}
                 startIcon={<ThumbDownIcon />}
+                sx={{ flexGrow: 1 }}
               >
                 NO
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => handleAnswer("Skip")}
+                startIcon={<SkipNextIcon />}
+                sx={{ flexGrow: 1, color: '#666' }}
+              >
+                SKIP QUESTION
               </Button>
             </Box>
           </>
