@@ -32,11 +32,16 @@ public class DeepseekService {
                         + "Example: 'Do you prefer recent releases?' "
                         + "Only provide one question with no extra text."
                         + "Do NOT give questions that are makes you choose ( this or that )"
-                        + "Focus more on users mood right now at this time."));
+                        + "Focus more on users mood right now at this time."
+                        + "If the answer given by the user is 'skip' skip the given question and create a new question."));
+
 
         for (int i = 0; i < answers.size(); i++) {
             String answer = answers.get(i);
-            if ("skip".equals(answer)) continue;
+            if ("skip".equals(answer)) {
+                messages.add(new Message("user", answer));
+                continue;
+            }
 
             messages.add(new Message("assistant", previousQuestions.get(i)));
             messages.add(new Message("user", answer));

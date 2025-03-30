@@ -55,7 +55,6 @@ public class ConversationController {
         try {
             state.getAnswers().add(answer);
 
-            // Only increment count for valid answers
             if (!"skip".equals(answer)) {
                 state.setAnswerCount(state.getAnswerCount() + 1);
             }
