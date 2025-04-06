@@ -8,6 +8,7 @@
         <version>3.4.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>com.example</groupId>
     <artifactId>PoppyAI</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -28,6 +29,8 @@
     </scm>
     <properties>
         <java.version>17</java.version>
+        <property name="jakarta.persistence.jdbc.url"
+                  value="jdbc:mysql://mysql:3306/movie_picker_db?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
     </properties>
     <dependencies>
         <dependency>
