@@ -40,7 +40,7 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: rootpass
           MYSQL_DATABASE: movie_picker_db
         ports:
           - 3306:3306
@@ -59,6 +59,9 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+
+      - name: Set Spring profile to test
+        run: echo "SPRING_PROFILES_ACTIVE=test" >> $GITHUB_ENV
 
       - name: Run tests with Maven
         run: mvn test
