@@ -60,6 +60,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Set Spring profile to test
+        run: echo "SPRING_PROFILES_ACTIVE=test" >> $GITHUB_ENV
+
       - name: Run tests with Maven
         run: mvn test
         working-directory: ./backend/PoppyAI
