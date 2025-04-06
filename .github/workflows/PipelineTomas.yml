@@ -40,17 +40,6 @@ jobs:
       - name: Set Spring profile to test
         run: echo "SPRING_PROFILES_ACTIVE=test" >> $GITHUB_ENV
 
-      - name: Wait for MySQL to be ready
-        run: |
-          for i in {1..30}; do
-            if mysqladmin ping -h mysql -P 3306 --silent; then
-              echo "MySQL is up"
-              exit 0
-            fi
-            echo "Waiting for MySQL..."
-            sleep 2
-          done
-          echo "MySQL did not become ready in time" && exit 1
 
       - name: Build with Maven
         run: mvn clean install
