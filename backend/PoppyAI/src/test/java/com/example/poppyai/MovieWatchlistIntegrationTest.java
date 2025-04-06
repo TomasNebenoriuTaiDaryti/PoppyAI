@@ -54,23 +54,6 @@ public class MovieWatchlistIntegrationTest {
 
     @Test
     @Order(1)
-    public void testLogin() throws Exception {
-        String json = """
-                {
-                    "username": "%s",
-                    "password": "%s"
-                }
-                """.formatted(TEST_USERNAME, TEST_PASSWORD);
-
-        mockMvc.perform(post("/api/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isOk())
-                .andExpect(content().string(TEST_USERNAME));
-    }
-
-    @Test
-    @Order(2)
     public void testMovieSearch_andExtractImdbId() throws Exception {
         var response = mockMvc.perform(get("/api/movies/search")
                         .param("title", MOVIE_TITLE))
@@ -90,7 +73,7 @@ public class MovieWatchlistIntegrationTest {
     }
 
     @Test
-    @Order(3)
+    @Order(2)
     public void testAddAndVerifyMovieInWatchlist() throws Exception {
         mockMvc.perform(post("/api/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -114,7 +97,7 @@ public class MovieWatchlistIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(movie)))
                 .andExpect(status().isOk());
-        
+
         mockMvc.perform(get("/api/watchlist/" + TEST_USERNAME))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(imdbId)));
