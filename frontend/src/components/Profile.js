@@ -1,46 +1,56 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Typography, List, ListItem, ListItemText, Button, CircularProgress, IconButton } from '@mui/material';
+import { 
+  Container, 
+  Typography, 
+  Button, 
+  CircularProgress, 
+  Grid, 
+  Card, 
+  CardContent, 
+  IconButton, 
+  Box,
+  Link
+} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import api from '../api/api';
 
 const Profile = ({ onLogout }) => {
     const [watchlist, setWatchlist] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [userData, setUserData] = useState(null);
     const navigate = useNavigate();
     const username = localStorage.getItem('username');
 
     useEffect(() => {
-        if (!username) {
-            navigate('/login');
-            return;
-        }
-        
-        api.get(`/watchlist/${username}`)
-        .then(response => {
-            setWatchlist(response.data);
-            setLoading(false);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            setLoading(false);
-        });
+        const loadData = async () => {
+            try {
+                const [userResponse, watchlistResponse] = await Promise.all([
+                    api.get(`/profile/${username}`),
+                    api.get(`/watchlist/${username}`)
+                ]);
+                
+                setUserData(userResponse.data);
+                setWatchlist(watchlistResponse.data);
+            } catch (error) {
+                console.error('Loading error:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadData();
     }, [username, navigate]);
 
-    const handleLogout = () => {
-        localStorage.removeItem('isAuthenticated');
-        localStorage.removeItem('username');
-        onLogout();
-        navigate('/login');
-    };
-    const handleRemoveMovie = (movieId) => {
-        api.delete(`/watchlist/${username}/${movieId}`)
-            .then(() => {
-                setWatchlist(prev => prev.filter(m => m.id !== movieId));
-            })
-            .catch(error => {
-                console.error('Delete error:', error);
-            });
+    const handleRemoveMovie = async (movieId) => {
+        try {
+            await api.delete(`/watchlist/${username}/${movieId}`);
+            const watchlistResponse = await api.get(`/watchlist/${username}`);
+            setWatchlist(watchlistResponse.data);
+        } catch (error) {
+            console.error('Delete error:', error);
+        }
     };
 
     if (loading) {
@@ -52,45 +62,98 @@ const Profile = ({ onLogout }) => {
     }
 
     return (
-        <Container>
-            <Typography variant="h4" gutterBottom>
-                Welcome, {username}
+        <Container maxWidth="lg" sx={{ py: 4 }}>
+            <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center', 
+                mb: 4,
+                flexWrap: 'wrap',
+                gap: 2
+            }}>
+                <Typography variant="h4" component="h1">
+                    Welcome, {userData?.username}
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Button
+                        variant="contained"
+                        startIcon={<EditIcon />}
+                        onClick={() => navigate('/profile/edit')}
+                    >
+                        Edit Profile
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        onClick={onLogout}
+                    >
+                        Logout
+                    </Button>
+                </Box>
+            </Box>
+
+            <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
+                Your Watchlist ({watchlist.length})
             </Typography>
-            <Button variant="contained" onClick={handleLogout} sx={{ mb: 2 }}>
-                Logout
-            </Button>
-            <Typography variant="h5" gutterBottom>
-                Your Watchlist
-            </Typography>
-            <List>
-                {watchlist.map(movie => (
-                    <ListItem key={movie.id} sx={{ backgroundColor: 'background.paper' }}>
-                        <ListItemText
-                            primary={`${movie.title}`}
-                            secondary={
-                                <>
-                                    <Typography variant="body2">
-                                        Genre: {movie.genre} 
+
+            {watchlist.length === 0 ? (
+                <Typography variant="body1" color="text.secondary">
+                    Your watchlist is empty. Start adding movies!
+                </Typography>
+            ) : (
+                <Grid container spacing={3}>
+                    {watchlist.map(movie => (
+                        <Grid item xs={12} sm={6} md={4} key={movie.id}>
+                            <Card sx={{ 
+                                height: '100%', 
+                                display: 'flex', 
+                                flexDirection: 'column',
+                                p: 2
+                            }}>
+                                <CardContent>
+                                    <Typography variant="h6" gutterBottom>
+                                        {movie.title}
                                     </Typography>
-                                    <Typography variant="body2">
-                                        Rating: {movie.rating}
+                                    
+                                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                                        Genre: {movie.genre}
                                     </Typography>
-                                    <Typography variant="body2">
-                                        Description: {movie.description}
+
+                                    <Typography variant="body2" paragraph>
+                                        {movie.description}
                                     </Typography>
-                                </>
-                            }
-                        />
-                        <IconButton 
-                            edge="end"
-                            onClick={() => handleRemoveMovie(movie.id)}
-                            color="error"
-                        >
-                            <DeleteIcon />
-                        </IconButton>
-                    </ListItem>
-                ))}
-            </List>
+
+                                    {movie.imdbID && (
+                                        <Box sx={{ 
+                                            display: 'flex', 
+                                            justifyContent: 'space-between', 
+                                            alignItems: 'center'
+                                        }}>
+                                            <Link
+                                                href={`https://www.imdb.com/title/${movie.imdbID}`}
+                                                target="_blank"
+                                                rel="noopener"
+                                                sx={{ 
+                                                    color: '#f5c518',
+                                                    textDecoration: 'none',
+                                                    '&:hover': { textDecoration: 'underline' }
+                                                }}
+                                            >
+                                                View on IMDb
+                                            </Link>
+                                            <IconButton 
+                                                onClick={() => handleRemoveMovie(movie.id)}
+                                                color="error"
+                                            >
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </Box>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    ))}
+                </Grid>
+            )}
         </Container>
     );
 };

@@ -19,7 +19,8 @@ const Login = ({ onLogin }) => {
           })
           .catch(error => {
               console.error('Login error:', error);
-              setError(error.response?.data || 'Invalid credentials');
+              if (!error.response) setError('Server is unavailable. Please try again later.');
+              else setError(error.response?.data || 'Invalid credentials');
           });
   };
 

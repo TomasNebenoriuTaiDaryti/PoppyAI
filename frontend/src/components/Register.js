@@ -8,7 +8,7 @@ import {
   Box,
   CircularProgress
 } from '@mui/material';
-import axios from 'axios';
+import api from '../api/api';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:8080/api/register', formData);
+      const response = await api.post('/register', formData);
       
       if (response.data === "User registered successfully") {
         navigate('/login');

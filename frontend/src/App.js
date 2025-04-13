@@ -9,6 +9,7 @@ import MainPage from './components/MainPage';
 import MovieSearch from './components/MovieSearch';
 import Profile from './components/Profile';
 import MovieQuiz from './components/MovieQuiz';
+import ProfileEdit from './components/ProfileEdit';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -69,6 +70,9 @@ const App = () => {
         } />
         <Route path="/quiz" element={
           isAuthenticated ? <MovieQuiz /> : <Navigate to="/login" />
+        } />
+        <Route path="/profile/edit" element={
+          isAuthenticated ? <ProfileEdit /> : <Navigate to="/login" />
         } />
       </Routes>
     </Router>
