@@ -9,19 +9,19 @@ const Login = ({ onLogin }) => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
       e.preventDefault();
       
-      api.post('/login', { username, password })
-          .then(response => {
-              onLogin(response.data);
-              navigate('/');
-          })
-          .catch(error => {
-              console.error('Login error:', error);
-              if (!error.response) setError('Server is unavailable. Please try again later.');
-              else setError(error.response?.data || 'Invalid credentials');
-          });
+      try{
+        const response = await api.post('/login', { username, password });
+        onLogin(response.data);
+        navigate('/');
+      }
+      catch(error){
+            console.error('Login error:', error);
+            if (!error.response) setError('Server is unavailable. Please try again later.');
+            else setError('Invalid credentials');
+      }
   };
 
     return (

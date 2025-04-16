@@ -50,7 +50,8 @@ const ProfileEdit = () => {
             localStorage.setItem('username', formData.username);
             navigate('/profile');
         } catch (err) {
-            setError(err.response?.data || 'Update failed');
+            console.error(err);
+            setError('Update failed');
         } finally {
             setLoading(false);
         }
